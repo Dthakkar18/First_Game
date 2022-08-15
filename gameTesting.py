@@ -1,18 +1,7 @@
+from re import S
 import pygame
 
 from pygame.locals import *
-
-#define a object by a class
-class Square(pygame.sprite.Sprite):
-    def __init__(self):
-        super(Square, self).__init__()
-
-        #define demension of surface/square
-        self.surf = pygame.Surface((25, 25))
-
-        #define color of surface
-        self.surf.fill((0, 200, 255))
-        self.rect = self.surf.get_rect()
 
 # initialize game
 pygame.init()
@@ -21,37 +10,61 @@ pygame.init()
 screen = pygame.display.set_mode((800, 600))
 
 # create square objs
-square1 = Square()
+color = (0, 200, 255)
+
+# obj coordinates
+x = 100
+y = 100
+
+# obj dimensions
+width = 20
+height = 20
+
+# obj step
+step = 4
 
 # game loop var
 gameOn = True
 
 # game loop
 while gameOn:
+    pygame.time.delay(10)
+
     #loop through the event queue
     for event in pygame.event.get():
-
-        # check for a key press down
-        if event.type == KEYDOWN:
-
-            # if backspace key pressed
-            if event.key == K_BACKSPACE:
-                gameOn = False
-
-            # if right arrow clicked
-            if event.key == K_RIGHT:
-                print("moving right!")
-                x += 5
-
-
-        # check for QUIT event
-        elif event.type == QUIT:
+        if event.type == QUIT:
             gameOn = False
 
-    # where square will be displayed
-    x = 40
-    y = 40
-    screen.blit(square1.surf, (x, y))
+    # keys pressed info
+    keys = pygame.key.get_pressed()
 
+    # right key press
+    if keys[pygame.K_RIGHT]:
+        # move obj right
+        x += step
+    
+    # left key press
+    if keys[pygame.K_LEFT]:
+        # move obj left
+        x -= step
+
+    # up key press
+    if keys[pygame.K_UP]:
+        # move obj up
+        y -= step
+    
+    # down key press
+    if keys[pygame.K_DOWN]:
+        # move obj down
+        y += step
+
+    # color screen
+    screen.fill((0, 0, 0))
+    
+    # draw obj on screen
+    pygame.draw.rect(screen, color, (x, y, width, height))
+    
     # update display 
-    pygame.display.flip()
+    pygame.display.update()
+
+pygame.quit()
