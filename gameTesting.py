@@ -35,6 +35,16 @@ class Player(object):
     def moveDown(self):
         self.y += self.step
 
+# create obstacle class
+class Obstacle(object):
+    def __init__(self):
+        self.x = 200
+        self.y = 100
+        self.color = (255, 0, 0)
+    
+    def draw(self, screen):
+        pygame.draw.circle(screen, (self.color), (self.x, self.y), 10)
+
 # obj color
 color = (0, 200, 255)
 
@@ -52,6 +62,10 @@ step = 4
 # create and draw player 
 p = Player(x, y, width, height, color, step)
 p.draw(screen)
+
+# create and draw obstacle
+o = Obstacle()
+o.draw(screen)
 
 # game loop var
 gameOn = True
@@ -90,6 +104,7 @@ while gameOn:
 
     screen.fill((0, 0, 0))
     p.draw(screen)
+    o.draw(screen)
     
     # update display 
     pygame.display.update()
