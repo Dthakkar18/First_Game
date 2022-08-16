@@ -9,10 +9,36 @@ pygame.init()
 # deminsions of screen
 screen = pygame.display.set_mode((800, 600))
 
-# create square objs
+# create player class
+class Player(object):
+    def __init__(self, xcord, ycord, width, height, color, step):
+        self.x = xcord
+        self.y = ycord
+        self.width = width
+        self.height = height
+        self.step = step
+        self.color = color
+        
+    def draw(self, screen):
+        # draw obj on screen
+        pygame.draw.rect(screen, (self.color), (self.x, self.y, self.width, self.height))
+        
+    def moveRight(self):
+        self.x += self.step
+
+    def moveLeft(self):
+        self.x -= self.step
+    
+    def moveUp(self):
+        self.y -= self.step
+    
+    def moveDown(self):
+        self.y += self.step
+
+# obj color
 color = (0, 200, 255)
 
-# obj coordinates
+# obj starting coordinates
 x = 100
 y = 100
 
@@ -20,8 +46,12 @@ y = 100
 width = 20
 height = 20
 
-# obj step
+# obj step (move speed)
 step = 4
+
+# create and draw player 
+p = Player(x, y, width, height, color, step)
+p.draw(screen)
 
 # game loop var
 gameOn = True
@@ -41,28 +71,25 @@ while gameOn:
     # right key press
     if keys[pygame.K_RIGHT]:
         # move obj right
-        x += step
+        p.moveRight()
     
     # left key press
     if keys[pygame.K_LEFT]:
         # move obj left
-        x -= step
+        p.moveLeft()
 
     # up key press
     if keys[pygame.K_UP]:
         # move obj up
-        y -= step
+        p.moveUp()
     
     # down key press
     if keys[pygame.K_DOWN]:
         # move obj down
-        y += step
+        p.moveDown()
 
-    # color screen
     screen.fill((0, 0, 0))
-    
-    # draw obj on screen
-    pygame.draw.rect(screen, color, (x, y, width, height))
+    p.draw(screen)
     
     # update display 
     pygame.display.update()
