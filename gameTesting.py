@@ -71,9 +71,26 @@ class Obstacle(object):
             self.y += self.step
         else:
             self.y -= self.step
-        
-        
 
+# create bullet class
+class Bullet(object):
+    def __init__(self) -> None:
+        self.x = player.x + 5
+        self.y =  player.y - 12
+        self.width = 10
+        self.height = 10
+        self.color = (255, 255, 0)      
+        self.step = 2
+        self.on = False
+
+    def draw(self, player, screen):
+        if self.on:
+            pygame.draw.rect(screen, (self.color), (self.x, self.y, self.width, self.height))
+            self.move("top", screen)
+    
+    def move(self, direction, screen):
+        if direction == "top":
+            self.y -= self.step
 
 
 # player color
@@ -98,9 +115,8 @@ for i in range(3):
     obstacle.draw
     obstacles.append(obstacle)
 
-
+#create bullets
 bullets = []
-
 
 # game loop var
 gameOn = True
@@ -119,8 +135,12 @@ while gameOn:
 
     # trying to implement bullets
     if keys[pygame.K_SPACE]:
-        bullet = pygame.Rect(100, 100, 20, 20)
+        bullet = Bullet()
+        if len(bullets) > 0:
+            bullets.remove(bullets[0])
         bullets.append(bullet)
+        bullets[0].on = True
+        bullets[0].move("top", screen)
         
     # right key press
     if keys[pygame.K_RIGHT]:
@@ -144,6 +164,13 @@ while gameOn:
 
     screen.fill((0, 0, 0))
     player.draw(screen)
+
+    # draw bullets
+    for bullet in bullets:
+        if bullet.y > 0:
+            bullet.draw(player, screen)
+        else:
+            bullet.on = False    
 
     # move and draw obstacles
     for obstacle in obstacles:
