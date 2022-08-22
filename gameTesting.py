@@ -1,5 +1,6 @@
 from re import S
 import pygame
+import random
 
 from pygame.locals import *
 
@@ -7,65 +8,99 @@ from pygame.locals import *
 pygame.init()
 
 # deminsions of screen
-screen = pygame.display.set_mode((800, 600))
+screen = pygame.display.set_mode((1000, 800))
 
 # create player class
 class Player(object):
-    def __init__(self, xcord, ycord, width, height, color, step):
+    def __init__(self, xcord, ycord, width, height, color, step, screen):
         self.x = xcord
         self.y = ycord
         self.width = width
         self.height = height
         self.step = step
         self.color = color
+        self.screen = screen
         
     def draw(self, screen):
         # draw obj on screen
         pygame.draw.rect(screen, (self.color), (self.x, self.y, self.width, self.height))
         
     def moveRight(self):
-        self.x += self.step
+        if self.x + self.step >= self.screen.get_width():
+            self.x = 0
+        else:
+            self.x += self.step
 
     def moveLeft(self):
-        self.x -= self.step
+        if self.x - self.step <= 0:
+            self.x = self.screen.get_width()
+        else:
+            self.x -= self.step
     
     def moveUp(self):
-        self.y -= self.step
+        if self.y - self.step <= 0:
+            self.y = self.screen.get_height()
+        else:
+            self.y -= self.step
     
     def moveDown(self):
-        self.y += self.step
+        if self.y + self.step >= self.screen.get_height():
+            self.y = 0
+        else:
+            self.y += self.step
 
 # create obstacle class
 class Obstacle(object):
     def __init__(self):
-        self.x = 200
-        self.y = 100
+        self.x = random.randrange(100, 900)
+        self.y = random.randrange(100, 700)
         self.color = (255, 0, 0)
+        self.step = 1
     
     def draw(self, screen):
-        pygame.draw.circle(screen, (self.color), (self.x, self.y), 10)
+        pygame.draw.circle(screen, (self.color), (self.x , self.y), 10)
+    
+    def move(self, object: Player) -> Player:
+        # for the x direction
+        if object.x < self.x:
+            self.x -= self.step
+        else:
+            self.x += self.step
+        # for the y direction
+        if object.y > self.y:
+            self.y += self.step
+        else:
+            self.y -= self.step
+        
+        
 
-# obj color
+
+
+# player color
 color = (0, 200, 255)
-
-# obj starting coordinates
+# player starting coordinates
 x = 100
 y = 100
-
-# obj dimensions
+# player dimensions
 width = 20
 height = 20
-
-# obj step (move speed)
+# player step (move speed)
 step = 4
-
 # create and draw player 
-p = Player(x, y, width, height, color, step)
-p.draw(screen)
+player = Player(x, y, width, height, color, step, screen)
+player.draw(screen)
 
-# create and draw obstacle
-o = Obstacle()
-o.draw(screen)
+
+# create and draw three obstacles
+obstacles = []
+for i in range(3):
+    obstacle = Obstacle()
+    obstacle.draw
+    obstacles.append(obstacle)
+
+
+bullets = []
+
 
 # game loop var
 gameOn = True
@@ -82,29 +117,38 @@ while gameOn:
     # keys pressed info
     keys = pygame.key.get_pressed()
 
+    # trying to implement bullets
+    if keys[pygame.K_SPACE]:
+        bullet = pygame.Rect(100, 100, 20, 20)
+        bullets.append(bullet)
+        
     # right key press
     if keys[pygame.K_RIGHT]:
         # move obj right
-        p.moveRight()
+        player.moveRight()
     
     # left key press
     if keys[pygame.K_LEFT]:
         # move obj left
-        p.moveLeft()
+        player.moveLeft()
 
     # up key press
     if keys[pygame.K_UP]:
         # move obj up
-        p.moveUp()
+        player.moveUp()
     
     # down key press
     if keys[pygame.K_DOWN]:
         # move obj down
-        p.moveDown()
+        player.moveDown()
 
     screen.fill((0, 0, 0))
-    p.draw(screen)
-    o.draw(screen)
+    player.draw(screen)
+
+    # move and draw obstacles
+    for obstacle in obstacles:
+        obstacle.move(player)
+        obstacle.draw(screen)
     
     # update display 
     pygame.display.update()
